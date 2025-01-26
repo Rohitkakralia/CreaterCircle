@@ -1,9 +1,18 @@
+"use client"
 import React from 'react'
+import { useSession, signIn, signOut } from "next-auth/react"
 import Link from 'next/link'
+import NavbarAfterLogin from './NavbarAfterLogin'
 const Navbar = () => {
+  const { data: session } = useSession()
+  if(session) {
+    return <>
+      <NavbarAfterLogin user={session.user.email} />
+    </>
+  }
   return (
     <nav className='bg-blue-950 text-white flex justify-between items-center px-4 h-16'>
-        <div className='font-bold'>Patreon</div>
+        <div className='font-bold'>CreatorCircle!</div>
         {/* <ul className='flex justify-center gap-4'>
           <li>Home</li>
           <li>About</li>
