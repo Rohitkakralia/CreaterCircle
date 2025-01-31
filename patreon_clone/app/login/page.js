@@ -2,13 +2,17 @@
 import React from "react";
 import { useSession, signIn } from "next-auth/react";
 import Link from "next/link";
-const Login = () => {
-  const { status } = useSession();
+import { useRouter } from "next/navigation";
 
-  if (status === "loading") return <p>Loading...</p>;
+const Login = () => {
+ const { data: session } = useSession();
+   if(session) {
+     const router = useRouter();
+     router.push("/Dashboard")
+   }
 
   return (
-    <div className="bg-black text-white container py-14 mx-auto flex flex-col items-center">
+    <div className=" text-white container py-14 mx-auto mt-7 flex flex-col items-center">
       <h2 className="text-2xl text-center font-bold mb-7">
         Signup/Login to get your support
       </h2>
@@ -160,7 +164,6 @@ const Login = () => {
           <span>Continue with Facebook</span>
         </button>
         
-        <Link href={"/"}>
         <button 
         onClick={() => signIn("github")} 
         className="flex items-center bg-white border border-gray-300 rounded-lg shadow-md max-w-xs px-6 py-2 text-sm font-medium text-gray-800 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
@@ -205,7 +208,6 @@ const Login = () => {
 
           <span>Continue with Github</span>
         </button>
-        </Link>
 
         <button className="flex items-center bg-white border border-gray-300 rounded-lg shadow-md max-w-xs px-6 py-2 text-sm font-medium text-gray-800 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
           <svg
