@@ -5,11 +5,16 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const Login = () => {
- const { data: session } = useSession();
-   if(session) {
-     const router = useRouter();
-     router.push("/Dashboard")
-   }
+  const { data: session } = useSession();
+  const router = useRouter();  // ✅ GOOD - Hook at top level
+  
+  // Use useEffect for navigation
+  React.useEffect(() => {
+    if (session) {
+      router.push("/dashboard");
+    }
+  }, [session, router]);
+
 
   return (
     <div className=" text-white container py-14 mx-auto mt-7 flex flex-col items-center">
@@ -31,9 +36,9 @@ const Login = () => {
             <g
               id="Icons"
               stroke="none"
-              stroke-width="1"
+              strokeWidth="1"
               fill="none"
-              fill-rule="evenodd"
+              fillRule="evenodd"
             >
               <g id="Color-" transform="translate(-401.000000, -860.000000)">
                 <g id="Google" transform="translate(401.000000, 860.000000)">
@@ -83,9 +88,9 @@ const Login = () => {
             <g
               id="Icons"
               stroke="none"
-              stroke-width="1"
+              strokeWidth="1"
               fill="none"
-              fill-rule="evenodd"
+              fillRule="evenodd"
             >
               <g
                 id="Color-"
@@ -113,9 +118,9 @@ const Login = () => {
             <g
               id="Icons"
               stroke="none"
-              stroke-width="1"
+              strokeWidth="1"
               fill="none"
-              fill-rule="evenodd"
+              fillRule="evenodd"
             >
               <g
                 id="Color-"
@@ -144,9 +149,9 @@ const Login = () => {
             <g
               id="Icons"
               stroke="none"
-              stroke-width="1"
+              strokeWidth="1"
               fill="none"
-              fill-rule="evenodd"
+              fillRule="evenodd"
             >
               <g
                 id="Color-"
@@ -177,19 +182,19 @@ const Login = () => {
             <g
               id="team-collaboration/version-control/github"
               stroke="none"
-              stroke-width="1"
+              strokeWidth="1"
               fill="none"
-              fill-rule="evenodd"
+              fillRule="evenodd"
             >
               <g
                 id="container"
                 transform="translate(2.000000, 2.000000)"
-                fill-rule="nonzero"
+                fillRule="nonzero"
               >
                 <rect
                   id="mask"
                   stroke="#000000"
-                  stroke-width="2"
+                  strokeWidth="2"
                   fill="#000000"
                   x="-1"
                   y="-1"
@@ -220,9 +225,9 @@ const Login = () => {
             <g
               id="Page-1"
               stroke="none"
-              stroke-width="1"
+              strokeWidth="1"
               fill="none"
-              fill-rule="evenodd"
+              fillRule="evenodd"
             >
               <g
                 id="Dribbble-Light-Preview"
