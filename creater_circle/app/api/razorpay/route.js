@@ -36,6 +36,12 @@ export async function POST(req) {
                 { new: true }
             );
 
+            // Fetch all completed payments
+            const payments = await Payment.find({ 
+                to_user: updatePayment.to_user,
+                done: "true"
+            }).sort({ createdAt: -1 });
+
             return NextResponse.json({ 
                 success: true, 
                 redirectUrl: `${process.env.NEXT_PUBLIC_URL}/${updatePayment.to_user}?paymentdone=true`
@@ -53,5 +59,18 @@ export async function POST(req) {
             message: "Internal server error",
             error: error.message
         }, { status: 500 });
+    }
+}
+
+export async function GET() {
+    try {
+        await connectDB();
+        const payments = await Payment.find({ 
+            done: "true"
+        }).sort({ createdAt: -1 });
+
+        return NextResponse.json({ success: true, payments });
+    } catch (error) {
+        return NextResponse.json({ success: false, error: error.message });
     }
 }

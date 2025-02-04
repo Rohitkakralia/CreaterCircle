@@ -23,10 +23,10 @@ const Dashboard = () => {
         }
     }, [])
 
-    const getData = async () => {
-        let u = await fetchuser(session.user.name)
-        setform(u)
-    }
+    // const getData = async () => {
+    //     let u = await fetchuser(session.user.name)
+    //     setform(u)
+    // }
 
     const handleChange = (e) => {
         setform({ ...form, [e.target.name]: e.target.value })

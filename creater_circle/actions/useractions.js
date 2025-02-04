@@ -23,7 +23,6 @@ export const initiate = async(amount, to_username, paymentform) => {
     let options = {
         amount: Number.parseInt(amount),
         currency: "INR",
-
     }
 
     let x = await instance.orders.create(options)
@@ -38,4 +37,20 @@ export const initiate = async(amount, to_username, paymentform) => {
     })
 
     return x;
+}
+
+export const fetchuser = async(username) => {
+    connectDB();
+    console.log(username);
+    let u = await User.findOne({ username: username });
+    let user = u.toObject({flattenOjectIds: true});
+    return user;
+}
+
+//fetchPayment
+export const fetchPayments = async(username) => {
+    await connectDB();
+    //find all payment sorted by decresing order of amount and flatten the object
+    let payments = await Payment.find({ to_user: username }).sort({ amount: -1 }).lean();
+    return payments;
 }
