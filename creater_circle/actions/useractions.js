@@ -30,7 +30,7 @@ export const initiate = async(amount, to_username, paymentform) => {
     //create a payment object which shows a pending payment in the database
     await Payment.create({
         oid: x.id,
-        amount: amount,
+        amount: amount/100,
         to_user: to_username,
         name: paymentform.name,
         message: paymentform.message
@@ -40,7 +40,7 @@ export const initiate = async(amount, to_username, paymentform) => {
 }
 
 export const fetchuser = async(username) => {
-    connectDB();
+    await connectDB();
     console.log(username);
     let u = await User.findOne({ username: username });
     let user = u.toObject({flattenOjectIds: true});
@@ -48,9 +48,31 @@ export const fetchuser = async(username) => {
 }
 
 //fetchPayment
-export const fetchPayments = async(username) => {
+// fetchPayment
+export const fetchPayments = async (username) => {
+    if (!username) {
+        throw new Error("Username is required to fetch payments.");
+    }
+
     await connectDB();
-    //find all payment sorted by decresing order of amount and flatten the object
-    let payments = await Payment.find({ to_user: username }).sort({ amount: -1 }).lean();
-    return payments;
+
+    // Find payments for the user, sorted by amount in descending order
+    const payments = await Payment.find({ to_user: username, done: true })
+        .sort({ amount: -1 })
+        .lean(); // Convert MongoDB objects to plain JavaScript objects
+
+    return payments; // Returns an array of payment objects
+};
+
+
+export const updateProfile = async(data, oldusername) => {
+    await connectDB();
+    const ndata = Object.fromEntries(data);
+    if(oldusername !== ndata.username) {
+        let u = await User.findOne({ username: ndata.username });
+        if(u) {
+            return {error: "Username already exists"}
+        }   
+    }
+    await User.updateOne({email: ndata.email}, ndata)
 }

@@ -5,6 +5,10 @@ import { useState, useEffect } from "react";
 import { initiate } from "../actions/useractions";
 import { useSession } from "next-auth/react";
 import {fetchuser, fetchPayments} from "../actions/useractions";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { Bounce } from 'react-toastify';
+import { useSearchParams, useRouter } from "next/navigation";
 
 const PaymentPage = ({ username }) => {
   const { data: session } = useSession();
@@ -12,18 +16,36 @@ const PaymentPage = ({ username }) => {
   const [paymentform, setPaymentform] = useState({});
   const [currentUser, setcurrentUser] = useState({});
   const [payments, setPayments] = useState([]);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     getData();
   }, []);
 
+  useEffect(() => {
+    if(searchParams.get("paymentdone" == "true")){
+      toast('Payment Done', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+        });
+    }
+    router.push(`/${username}`);
+  }, []);
   const handleChange = (e) => {
     setPaymentform({ ...paymentform, [e.target.name]: e.target.value });
     console.log(paymentform);
   };
 
   const getData = async () => {
-    let u = fetchuser(username);
+    let u = await fetchuser(username);
     setcurrentUser(u);
     let dbpayments = await fetchPayments(username);
     setPayments(dbpayments);
@@ -48,7 +70,7 @@ const PaymentPage = ({ username }) => {
     let a = await initiate(amount, username, paymentform);
     let orderId = a.id;
     var options = {
-      key: process.env.NEXT_PUBLIC_KEY_ID, // Enter the Key ID generated from the Dashboard
+      key: currentUser.razorpayid, // Enter the Key ID generated from the Dashboard
       amount: amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
       currency: "INR",
       name: "Creater Circle", //your business name
@@ -94,6 +116,20 @@ const PaymentPage = ({ username }) => {
   };
   return (
     <>
+      <ToastContainer
+                      position="top-right"
+                      autoClose={5000}
+                      hideProgressBar={false}
+                      newestOnTop={false}
+                      closeOnClick
+                      rtl={false}
+                      pauseOnFocusLoss
+                      draggable
+                      pauseOnHover
+                      theme="light"
+                  />
+                  {/* Same as */}
+                   <ToastContainer />  
       <Script src="https://checkout.razorpay.com/v1/checkout.js"></Script>
 
       <div className="cover relative text-white flex items-center justify-center">
@@ -104,7 +140,7 @@ const PaymentPage = ({ username }) => {
         <div className="absolute md:-bottom-16 -bottom-12 border-white border-2 rounded-full flex items-center justify-center">
           <img
             className="rounded-full md:w-32 md:h-32 h-20 w-20"
-            src="https://c10.patreonusercontent.com/4/patreon-media/p/campaign/4842667/aa52624d1cef47ba91c357da4a7859cf/eyJoIjoxMDgwLCJ3IjoxMDgwfQ%3D%3D/4.gif?token-time=1739577600&token-hash=xtJzl1f1YE6azgCRLlHzk1wqkRfQXphNn9QjUBIpuLw%3D"
+            // src={currentUser.profilepic}
             alt=""
           />
         </div>
@@ -124,6 +160,7 @@ const PaymentPage = ({ username }) => {
           <div className="supporter w-1/2 bg-slate-900 rounded-xl p-10">
             <h2 className="text-lg font-bold text-center my-6">SUPPORTERS</h2>
             <ul>
+              {payments.length === 0 && <li>No payment yet</li>}
               {payments.map((payment, index) => (
                 <li key={index} className="my-3">
                   {payment.name} donated <span>₹{payment.amount / 100} </span>
